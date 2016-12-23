@@ -121,6 +121,34 @@ describe('BlogPost API resource', () => {
         });
   });
 
+    describe('PUT endpoint', () => {
+        it ('should delete a single post', done => {
+            const updateData = {
+                title: 'Lalalalala',
+                content: 'Old Mc Donald had a farm. EI EI O'
+            }
+            BlogPost
+            .findOne()
+            .exec()
+            .then(_post => {
+                post = _post;
+                updateData.id = post.id;
+                return chai.request(app).put(`/posts/${post.id}`)
+                .send(updateData);
+            })
+            .then(response => {
+                response.should.have.status(201);
+                return BlogPost.findById(updateData.id);
+            })
+            .then(post => {
+                post.title.should.equal(updateData.title);
+                post.content.should.equal(updateData.content);
+                done();
+            })
+            .catch(error => {console.log(error)});
+        });
+    });
+
     describe('DELETE endpoint', () => {
         it ('should delete a single post', done => {
             let post;
